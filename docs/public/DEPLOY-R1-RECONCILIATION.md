@@ -29,3 +29,13 @@ Read-only `eth_getTransactionReceipt` result:
 Fault class: DETERMINISTIC. No deployment occurred. The r2 operation journal is retained and will not be reused. The preset plus explicit fee value still did not populate the deployment fee field; the toolchain's historical successful syntax includes the explicit `--fees` distribution JSON as well.
 
 Writes submitted after the failed deployments: 0 additional writes.
+
+## Deployment r3 — externally reconciled success
+
+Operation: `clause-branch-compatibility-council-build-deploy-r3`
+Transaction hash: `0xa2cb3147102a06c165e2e7fd5b28d3ac5866e1acbe2ab2674ea8fff7faa5f9e9`
+Contract address: `0x66Cc5CbB2ABf459f75b63699fbd3cf5c8c366b2c`
+Consensus: `ACCEPTED`; result `MAJORITY_AGREE`; direct RPC receipt status `0x1`; fee value `100000000000010352` wei.
+The operation journal reported reconciliation required, so the CLI result was independently reconciled from the same hash. Source code in the receipt matches the local contract bytes.
+
+This is deployment evidence only; frontend/Vercel E2E remains outstanding.
