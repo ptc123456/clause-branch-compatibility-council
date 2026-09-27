@@ -1,4 +1,4 @@
-import json
+# { "Depends": "py-genlayer:5jycge4q8k23462jtb0b9fyey1s9qz928sz2nbrd9mg4sxqg2qng" }`r`n`r`nimport json
 import hashlib
 from genlayer import gl
 
@@ -13,11 +13,11 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
     @gl.public.write
     def create_pair(self, base_text: str, branch_text: str, nonce: str) -> int:
         if not isinstance(base_text, str) or not isinstance(branch_text, str) or not isinstance(nonce, str):
-            raise ValueError("invalid types")
+            raise gl.vm.UserError("invalid types")
         if not base_text or not branch_text or len((base_text + branch_text).encode("utf-8")) > MAX_TEXT:
-            raise ValueError("invalid bounded input")
+            raise gl.vm.UserError("invalid bounded input")
         if len(nonce) > 128:
-            raise ValueError("nonce too long")
+            raise gl.vm.UserError("nonce too long")
         sender = str(gl.tx.origin)
         key = sender + ":" + nonce
         for existing_id, row in self.pairs.items():
@@ -31,14 +31,14 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
     def _pair(self, pair_id: int):
         row = self.pairs.get(pair_id)
         if row is None:
-            raise ValueError("unknown pair")
+            raise gl.vm.UserError("unknown pair")
         return row
 
     @gl.public.write
     def freeze_pair(self, pair_id: int, expected_revision: int):
         row = self._pair(pair_id)
         if row["owner"] != str(gl.tx.origin) or row["state"] != "OPEN" or row["revision"] != expected_revision:
-            raise ValueError("unauthorized or stale state")
+            raise gl.vm.UserError("unauthorized or stale state")
         row["state"] = "FROZEN"
         row["revision"] += 1
 
@@ -50,17 +50,17 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
 
     def _validate(self, result):
         if not isinstance(result, dict) or set(result) != {"v", "decision", "reason_code", "evidence_hash"} or result["v"] != 1:
-            raise ValueError("invalid consensus result")
+            raise gl.vm.UserError("invalid consensus result")
         if result["decision"] not in DECISIONS or result["reason_code"] not in REASONS or not isinstance(result["evidence_hash"], str) or len(result["evidence_hash"]) != 64 or any(c not in "0123456789abcdef" for c in result["evidence_hash"]):
-            raise ValueError("invalid consensus result")
+            raise gl.vm.UserError("invalid consensus result")
         return result
 
     @gl.public.write
     def evaluate_pair(self, pair_id: int, expected_revision: int):
         row = self._pair(pair_id)
         if row["state"] != "FROZEN" or row["revision"] != expected_revision or row["attempts"] >= 3:
-            raise ValueError("not evaluable")
-        result = self._validate(gl.nondet.exec_prompt(self._prompt(row), response_format="json"))
+            raise gl.vm.UserError("not evaluable")
+        result = self._validate(gl.eq_principle.strict_eq(lambda: gl.nondet.exec_prompt(self._prompt(row), response_format="json")))
         row["attempts"] += 1
         row["decision"] = result["decision"]
         row["reason_code"] = result["reason_code"]
@@ -73,19 +73,21 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
     def retry_pair(self, pair_id: int, expected_revision: int):
         row = self._pair(pair_id)
         if row["state"] != "UNRESOLVED" or row["revision"] != expected_revision or row["attempts"] >= 3:
-            raise ValueError("not retryable")
+            raise gl.vm.UserError("not retryable")
         row["state"] = "FROZEN"
         row["revision"] += 1
 
     @gl.public.view
-    def get_pair(self, pair_id: int):
+    def get_pair(self, pair_id: int) -> dict:
         return self._pair(pair_id)
 
     @gl.public.view
-    def get_decision(self, pair_id: int):
+    def get_decision(self, pair_id: int) -> dict:
         row = self._pair(pair_id)
         return {"state": row["state"], "decision": row["decision"], "reason_code": row["reason_code"], "evidence_hash": row["evidence_hash"], "revision": row["revision"]}
 
     @gl.public.view
-    def list_pairs(self):
+    def list_pairs(self) -> list:
         return [self.pairs[k] for k in sorted(self.pairs)]
+
+
