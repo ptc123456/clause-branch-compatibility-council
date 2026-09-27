@@ -1,0 +1,13 @@
+
+Contract: ClauseBranchCompatibilityCouncil
+
+Constructor (0 params):
+
+Methods (7):
+  - create_pair(base_text, branch_text, nonce) [write]
+  - evaluate_pair(pair_id, expected_revision) [write]
+  - freeze_pair(pair_id, expected_revision) [write]
+  - get_decision(pair_id) [view]
+  - get_pair(pair_id) [view]
+  - list_pairs() [view]
+  - retry_pair(pair_id, expected_revision) [write]
