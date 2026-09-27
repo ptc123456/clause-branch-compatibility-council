@@ -1,0 +1,7 @@
+{
+  "name": "clause-branch-compatibility-council",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {"build": "mkdir -p dist && cp index.html dist/index.html && cp app.js dist/app.js", "test": "node --test"}
+}
