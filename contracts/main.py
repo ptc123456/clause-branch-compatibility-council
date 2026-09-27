@@ -1,4 +1,6 @@
-# { "Depends": "py-genlayer:5jycge4q8k23462jtb0b9fyey1s9qz928sz2nbrd9mg4sxqg2qng" }`r`n`r`nimport json
+# { "Depends": "py-genlayer:5jycge4q8k23462jtb0b9fyey1s9qz928sz2nbrd9mg4sxqg2qng" }
+
+import json
 import hashlib
 from genlayer import gl
 
@@ -60,7 +62,11 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
         row = self._pair(pair_id)
         if row["state"] != "FROZEN" or row["revision"] != expected_revision or row["attempts"] >= 3:
             raise gl.vm.UserError("not evaluable")
-        result = self._validate(gl.eq_principle.strict_eq(lambda: gl.nondet.exec_prompt(self._prompt(row), response_format="json")))
+        def leader():
+            return gl.nondet.exec_prompt(self._prompt(row), response_format="json")
+        def validator(value):
+            return value
+        result = self._validate(gl.vm.run_nondet(leader, validator))
         row["attempts"] += 1
         row["decision"] = result["decision"]
         row["reason_code"] = result["reason_code"]
@@ -89,5 +95,10 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
     @gl.public.view
     def list_pairs(self) -> list:
         return [self.pairs[k] for k in sorted(self.pairs)]
+
+
+
+
+
 
 
