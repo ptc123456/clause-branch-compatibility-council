@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-09-27T11:49:00Z",
+  "endpoint": "https://studio-dev.genlayer.com/api",
+  "chainId": 61997,
+  "writesSubmitted": 0,
+  "actors": [{"actor":"actor7","address":"0x8581c4a532dd3f9b163b12809b1bd089f367147f","balanceWei":"139839159425749348313"}],
+  "tools": [
+    {"name":"genlayer CLI wrapper","kind":"official","official":true,"exactVersion":"0.40.0-rc.3","identity":"E:\\Genlayer-Tools\\studio-next-toolchain\\node_modules\\genlayer\\dist\\index.js; sha256 B8B7CCD88D92D688674A61B7276B87552EC4E108FA304084FBAFCFCFCB82AAA0","capabilities":["deploy","write","call","receipt","trace","fees","readback"]},
+    {"name":"genlayer-js","kind":"official","official":true,"exactVersion":"2.0.0-rc.1","identity":"E:\\Genlayer-Tools\\studio-next-toolchain\\node_modules\\genlayer-js","capabilities":["call","readback"]},
+    {"name":"genvm-lint","kind":"official","official":true,"exactVersion":"0.11.1rc2","identity":"E:\\Genlayer-Tools\\studio-next-toolchain\\.venv\\Scripts\\genvm-lint.exe; runner v0.6.0-rc5","capabilities":["deploy","integration-test"]}
+  ],
+  "compatibility":{"checked":true,"projectSdk":"genlayer-py 0.19.0rc2 / genlayer-js 2.0.0-rc.1","runtime":"GenVM v0.6.0-rc5; chain 61997"}
+}
