@@ -61,16 +61,21 @@ class ClauseBranchCompatibilityCouncil(gl.contract.Contract):
             raise gl.vm.UserError("invalid consensus result")
         return result
 
+    def _evaluate_prompt(self, prompt: str):
+        def leader():
+            return gl.nondet.exec_prompt(prompt, response_format="json")
+        return gl.eq_principle.prompt_non_comparative(
+            leader,
+            "classify clause compatibility",
+            "Return only the exact bounded JSON schema; all fields are consequential",
+        )
+
     @gl.public.write
     def evaluate_pair(self, pair_id: int, expected_revision: int):
         row = self._pair(pair_id)
         if row["state"] != "FROZEN" or row["revision"] != expected_revision or row["attempts"] >= 3:
             raise gl.vm.UserError("not evaluable")
-        def leader():
-            return gl.nondet.exec_prompt(self._prompt(row), response_format="json")
-        def validator(value):
-            return value
-        result = self._validate(gl.vm.run_nondet(leader, validator))
+        result = self._validate(self._evaluate_prompt(self._prompt(row)))
         row["attempts"] += 1
         row["decision"] = result["decision"]
         row["reason_code"] = result["reason_code"]

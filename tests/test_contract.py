@@ -14,7 +14,7 @@ class _VM:
         result = leader()
         assert validator(result) == result
         return result
-class _Nondet:
+class _Eq:\n    @staticmethod\n    def prompt_non_comparative(fn, _task, _criteria): return fn()\nclass _Nondet:
     def __init__(self): self.result = {"v":1,"decision":"COMPATIBLE","reason_code":"ALIGNED","evidence_hash":"a"*64}
     def exec_prompt(self, prompt, response_format=None):
         assert response_format == "json"
@@ -25,7 +25,7 @@ class _GL:
     contract = types.SimpleNamespace(Contract=_Contract)
     public = types.SimpleNamespace(write=_Decorator(), view=_Decorator())
     vm = _VM()
-    nondet = _Nondet()
+    nondet = _Nondet()\n    eq_principle = _Eq()
     message = types.SimpleNamespace(sender_address="0xowner")
 
 gl = _GL()
@@ -54,5 +54,6 @@ def test_invalid_consensus_result_fails_closed():
     with pytest.raises(ValueError):
         instance.evaluate_pair(pair_id, 1)
     assert instance.get_pair(pair_id)["state"] == "FROZEN"
+
 
 
