@@ -20,15 +20,16 @@ class _Nondet:
         assert response_format == "json"
         assert "UNTRUSTED BASE" in prompt
         return self.result
+class _Contract: pass
 class _GL:
-    Contract = type("Contract", (), {})
+    contract = types.SimpleNamespace(Contract=_Contract)
     public = types.SimpleNamespace(write=_Decorator(), view=_Decorator())
     vm = _VM()
     nondet = _Nondet()
-    tx = types.SimpleNamespace(origin="0xowner")
+    message = types.SimpleNamespace(sender_address="0xowner")
 
 gl = _GL()
-sys.modules["genlayer"] = types.SimpleNamespace(gl=gl)
+sys.modules["genlayer"] = gl
 spec = importlib.util.spec_from_file_location("contract", Path(__file__).parents[1] / "contracts" / "main.py")
 contract = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(contract)
@@ -53,3 +54,5 @@ def test_invalid_consensus_result_fails_closed():
     with pytest.raises(ValueError):
         instance.evaluate_pair(pair_id, 1)
     assert instance.get_pair(pair_id)["state"] == "FROZEN"
+
+

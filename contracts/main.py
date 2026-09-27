@@ -2,15 +2,19 @@
 
 import json
 import hashlib
-from genlayer import gl
+import genlayer as gl
 
 MAX_TEXT = 16 * 1024
 DECISIONS = {"COMPATIBLE", "CONDITIONAL", "INCOMPATIBLE"}
 REASONS = {"ALIGNED", "CONFLICT", "DEPENDENCY", "AMBIGUOUS"}
 
-class ClauseBranchCompatibilityCouncil(gl.Contract):
+class ClauseBranchCompatibilityCouncil(gl.contract.Contract):
     pairs = {}
     next_id = 1
+
+    def __init__(self):
+        self.pairs = {}
+        self.next_id = 1
 
     @gl.public.write
     def create_pair(self, base_text: str, branch_text: str, nonce: str) -> int:
@@ -20,7 +24,7 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
             raise gl.vm.UserError("invalid bounded input")
         if len(nonce) > 128:
             raise gl.vm.UserError("nonce too long")
-        sender = str(gl.tx.origin)
+        sender = str(gl.message.sender_address)
         key = sender + ":" + nonce
         for existing_id, row in self.pairs.items():
             if row["reservation"] == key:
@@ -39,7 +43,7 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
     @gl.public.write
     def freeze_pair(self, pair_id: int, expected_revision: int):
         row = self._pair(pair_id)
-        if row["owner"] != str(gl.tx.origin) or row["state"] != "OPEN" or row["revision"] != expected_revision:
+        if row["owner"] != str(gl.message.sender_address) or row["state"] != "OPEN" or row["revision"] != expected_revision:
             raise gl.vm.UserError("unauthorized or stale state")
         row["state"] = "FROZEN"
         row["revision"] += 1
@@ -95,6 +99,8 @@ class ClauseBranchCompatibilityCouncil(gl.Contract):
     @gl.public.view
     def list_pairs(self) -> list:
         return [self.pairs[k] for k in sorted(self.pairs)]
+
+
 
 
 
