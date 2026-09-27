@@ -1,9 +1,17 @@
-# Clause Branch Compatibility Council (Build Workspace)
+# Clause Branch Compatibility Council
 
-Implementation workspace reserved for the approved research handoff.
+A public GenLayer application for comparing a bounded base clause with a branch clause through validator consensus.
 
-Status: BLOCKED before SPEC_LOCK. The source dossier remains research-only and is not Build-approved.
-Research dossier: E:\Genlayer-Projects\clause-branch-compatibility-council
-Network target: Studio Next (chain 61997)
+## Network
 
-No contract, frontend, deployment, transaction, secret, or internal governance artifact is stored here yet.
+The target is Studio Next, chain `61997`, RPC `https://studio-dev.genlayer.com/api`. The current installed CLI (`0.39.2`) does not expose the required `studio-dev` preset; deployment remains blocked until an official compatible tool is available.
+
+## Local checks
+
+```text
+genvm-lint contracts/main.py
+pytest -q
+cd frontend && npm test && npm run build
+```
+
+The frontend refuses to submit when the contract address is not configured and never reports a transaction success before finality and authoritative readback.
