@@ -1,4 +1,5 @@
-const TARGET_CHAIN = "0xf1cd"; // 61997`r`nconst CONTRACT_ADDRESS = "0x66Cc5CbB2ABf459f75b63699fbd3cf5c8c366b2c";
+const TARGET_CHAIN = "0xf1cd"; // 61997;
+const CONTRACT_ADDRESS = "0x66Cc5CbB2ABf459f75b63699fbd3cf5c8c366b2c";
 const state = { provider: null, account: null, chainId: null, phase: "DISCONNECTED" };
 const $ = (id) => document.getElementById(id);
 function render(message) { $("wallet").textContent = state.account ? `${state.account} · chain ${state.chainId}` : "Wallet disconnected"; $("status").textContent = message; $("submit").disabled = !(state.account && state.chainId === TARGET_CHAIN); }
