@@ -1,0 +1,1 @@
+{"operationId":"clause-branch-compatibility-council-build-deploy-r1","txHash":"0xbd2f488e329319fb530a1de59c5aac83c2d5a5f5d695690d0874d83241892e95","status":"FAILED","revertReason":"FeeValueMustBeNonZero(1)","feeEstimateWei":"100000000000010352","writesSubmitted":0}
