@@ -15,4 +15,17 @@ Read-only `eth_getTransactionReceipt` result:
 Fault class: DETERMINISTIC. No deployment occurred. The operation journal is retained and will not be reused.
 
 Read-only `estimate-fees --fee-preset standard --json` returned feeValue `100000000000010352` wei. A corrected deployment may use a new operation ID with this explicit fee value.
-Writes submitted after the failed deployment: 0 additional writes.
+## Deployment failure reconciliation — r2
+
+Operation: `clause-branch-compatibility-council-build-deploy-r2`  
+Transaction hash: `0x003165ca4cb7b435fd3b683d9b39a008c5e8d83d843839301169cb6b9f528645`
+
+Read-only `eth_getTransactionReceipt` result:
+- status: `0x0`
+- blockNumber: `0x0`
+- revertReason: `FeeValueMustBeNonZero(1)`
+- contractAddress: `null`
+
+Fault class: DETERMINISTIC. No deployment occurred. The r2 operation journal is retained and will not be reused. The preset plus explicit fee value still did not populate the deployment fee field; the toolchain's historical successful syntax includes the explicit `--fees` distribution JSON as well.
+
+Writes submitted after the failed deployments: 0 additional writes.
